@@ -213,7 +213,7 @@ export default function MoviePage() {
 
         {/* Similar Movies */}
         {similar.length > 0 && (
-          <section className="space-y-6 pb-12">
+          <section className="space-y-6 pb-12" style={{ marginTop: "3.5rem" }}>
             <h2 className="text-2xl md:text-3xl font-semibold">
               Similar Movies
             </h2>

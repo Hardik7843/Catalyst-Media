@@ -19,8 +19,8 @@ export function MovieCard({ movie }: MovieCardProps) {
     : "N/A";
 
   return (
-    <Link href={`/movie/${movie.id}`} className="group block">
-      <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 border-none bg-card/50 backdrop-blur">
+    <Link href={`/movie/${movie.id}`} className="group block mb-2">
+      <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 border-none bg-card/50 backdrop-blur pb-2">
         <div className="relative aspect-2/3 overflow-hidden bg-muted">
           <Image
             src={posterUrl}

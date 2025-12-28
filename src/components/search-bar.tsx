@@ -42,7 +42,8 @@ export function SearchBar() {
         placeholder="Search for movies..."
         value={query}
         onChange={onChange}
-        className="pl-10 bg-background/50 backdrop-blur"
+        // extra padding left to make room for icon
+        className="pl-12 bg-background/50 backdrop-blur"
       />
     </div>
   );
