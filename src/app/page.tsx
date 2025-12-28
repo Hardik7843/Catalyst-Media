@@ -1,11 +1,35 @@
-import { getTrendingMovies, getPopularMovies } from "@/lib/tmdb";
-import { MovieGrid } from "@/components/movie-grid";
+"use client";
 
-export default async function Home() {
-  // Fetch data on the server
-  const trendingMovies = await getTrendingMovies("day");
-  const popularResponse = await getPopularMovies(1);
-  const popularMovies = popularResponse.results;
+import { useEffect, useState } from "react";
+import { fetchTrendingMovies, fetchPopularMovies } from "@/lib/api-client";
+import { MovieGrid } from "@/components/movie-grid";
+import { Movie } from "@/types/movie";
+
+export default function Home() {
+  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
+  const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadMovies() {
+      try {
+        setIsLoading(true);
+        const [trending, popular] = await Promise.all([
+          fetchTrendingMovies("day"),
+          fetchPopularMovies(1),
+        ]);
+
+        setTrendingMovies(trending.slice(0, 10));
+        setPopularMovies(popular.movies.slice(0, 10));
+      } catch (error) {
+        console.error("Error loading movies:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadMovies();
+  }, []);
 
   return (
     <main className="min-h-screen">
@@ -30,7 +54,7 @@ export default async function Home() {
               Trending Today
             </h2>
           </div>
-          <MovieGrid movies={trendingMovies.slice(0, 10)} />
+          <MovieGrid movies={trendingMovies} isLoading={isLoading} />
         </section>
 
         {/* Popular Movies */}
@@ -40,7 +64,7 @@ export default async function Home() {
               Popular Movies
             </h2>
           </div>
-          <MovieGrid movies={popularMovies.slice(0, 10)} />
+          <MovieGrid movies={popularMovies} isLoading={isLoading} />
         </section>
       </div>
     </main>

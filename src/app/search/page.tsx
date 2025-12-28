@@ -1,12 +1,48 @@
-import { searchMovies } from "@/lib/tmdb";
+"use client";
+
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { fetchSearchMovies } from "@/lib/api-client";
 import { MovieGrid } from "@/components/movie-grid";
-import { Suspense } from "react";
+import { Pagination } from "@/components/pagination";
+import { Movie } from "@/types/movie";
 
-interface SearchPageProps {
-  searchParams: Promise<{ q?: string }>;
-}
+function SearchResults() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") || "";
+  const page = parseInt(searchParams.get("page") || "1", 10);
 
-async function SearchResults({ query }: { query: string }) {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalResults: 0,
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadSearchResults() {
+      if (!query) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const response = await fetchSearchMovies(query, page);
+        setMovies(response.movies);
+        setPagination(response.pagination);
+      } catch (error) {
+        console.error("Error searching movies:", error);
+        setMovies([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadSearchResults();
+  }, [query, page]);
+
   if (!query) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -20,8 +56,6 @@ async function SearchResults({ query }: { query: string }) {
     );
   }
 
-  const results = await searchMovies(query);
-
   return (
     <div className="space-y-6">
       <div>
@@ -29,24 +63,29 @@ async function SearchResults({ query }: { query: string }) {
           Search Results for "{query}"
         </h2>
         <p className="text-muted-foreground mt-1">
-          Found {results.total_results}{" "}
-          {results.total_results === 1 ? "movie" : "movies"}
+          Found {pagination.totalResults}{" "}
+          {pagination.totalResults === 1 ? "movie" : "movies"}
         </p>
       </div>
-      <MovieGrid movies={results.results} />
+      <MovieGrid movies={movies} isLoading={isLoading} />
+
+      {!isLoading && movies.length > 0 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          baseUrl="/search"
+        />
+      )}
     </div>
   );
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const params = await searchParams;
-  const query = params.q || "";
-
+export default function SearchPage() {
   return (
     <main className="min-h-screen">
       <div className="container px-4 md:px-8 py-8">
         <Suspense fallback={<MovieGrid movies={[]} isLoading />}>
-          <SearchResults query={query} />
+          <SearchResults />
         </Suspense>
       </div>
     </main>
