@@ -1,12 +1,20 @@
 import { Movie, MovieDetails, MoviesResponse, Credits } from "@/types/movie";
+import {
+  mockMovies,
+  getMockMovieDetails,
+  getMockCredits,
+  getMockMoviesResponse,
+} from "./mock-data";
 
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
+const USE_MOCK_DATA =
+  !API_KEY || process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
 if (!API_KEY) {
   console.warn(
-    "TMDB API key is not configured. Please add NEXT_PUBLIC_TMDB_API_KEY to your .env.local file"
+    "TMDB API key is not configured. Using mock data for demonstration."
   );
 }
 
@@ -24,11 +32,22 @@ const buildUrl = (endpoint: string, params?: Record<string, string>) => {
   return url.toString();
 };
 
-// Fetch wrapper with error handling
-async function fetchFromTMDB<T>(url: string): Promise<T> {
+// Fetch wrapper with error handling and mock data fallback
+async function fetchFromTMDB<T>(
+  url: string,
+  mockFallback: () => T
+): Promise<T> {
+  if (USE_MOCK_DATA) {
+    console.log(
+      "Using mock data (API key not configured or mock mode enabled)"
+    );
+    return mockFallback();
+  }
+
   try {
     const response = await fetch(url, {
       next: { revalidate: 3600 }, // Cache for 1 hour
+      signal: AbortSignal.timeout(5000), // 5 second timeout
     });
 
     if (!response.ok) {
@@ -39,8 +58,11 @@ async function fetchFromTMDB<T>(url: string): Promise<T> {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching from TMDB:", error);
-    throw error;
+    console.error(
+      "Error fetching from TMDB, falling back to mock data:",
+      error
+    );
+    return mockFallback();
   }
 }
 
@@ -48,7 +70,9 @@ export async function getTrendingMovies(
   timeWindow: "day" | "week" = "day"
 ): Promise<Movie[]> {
   const url = buildUrl(`/trending/movie/${timeWindow}`);
-  const data = await fetchFromTMDB<MoviesResponse>(url);
+  const data = await fetchFromTMDB<MoviesResponse>(url, () =>
+    getMockMoviesResponse(mockMovies.slice(0, 10))
+  );
   return data.results;
 }
 
@@ -56,7 +80,9 @@ export async function getPopularMovies(
   page: number = 1
 ): Promise<MoviesResponse> {
   const url = buildUrl("/movie/popular", { page: page.toString() });
-  return await fetchFromTMDB<MoviesResponse>(url);
+  return await fetchFromTMDB<MoviesResponse>(url, () =>
+    getMockMoviesResponse(mockMovies)
+  );
 }
 
 export async function searchMovies(
@@ -67,22 +93,31 @@ export async function searchMovies(
     query,
     page: page.toString(),
   });
-  return await fetchFromTMDB<MoviesResponse>(url);
+  return await fetchFromTMDB<MoviesResponse>(url, () => {
+    const filtered = mockMovies.filter((m) =>
+      m.title.toLowerCase().includes(query.toLowerCase())
+    );
+    return getMockMoviesResponse(filtered);
+  });
 }
 
 export async function getMovieDetails(movieId: number): Promise<MovieDetails> {
   const url = buildUrl(`/movie/${movieId}`);
-  return await fetchFromTMDB<MovieDetails>(url);
+  return await fetchFromTMDB<MovieDetails>(url, () =>
+    getMockMovieDetails(movieId)
+  );
 }
 
 export async function getMovieCredits(movieId: number): Promise<Credits> {
   const url = buildUrl(`/movie/${movieId}/credits`);
-  return await fetchFromTMDB<Credits>(url);
+  return await fetchFromTMDB<Credits>(url, () => getMockCredits());
 }
 
 export async function getSimilarMovies(movieId: number): Promise<Movie[]> {
   const url = buildUrl(`/movie/${movieId}/similar`);
-  const data = await fetchFromTMDB<MoviesResponse>(url);
+  const data = await fetchFromTMDB<MoviesResponse>(url, () =>
+    getMockMoviesResponse(mockMovies.slice(0, 5))
+  );
   return data.results;
 }
 
