@@ -5,8 +5,8 @@ import {
   getMockCredits,
   getMockMoviesResponse,
 } from "./mock-data";
-import placeholderMovie from "../public/placeholder-movie.png";
-import placeholderBackdrop from "../public/placeholder-backdrop.png";
+import placeholderMovie from "@/assets/placeholder-movie.png";
+import placeholderBackdrop from "@/assets/placeholder-backdrop.png";
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
