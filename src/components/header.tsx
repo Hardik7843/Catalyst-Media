@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { SearchBar } from "./search-bar";
 import { Film } from "lucide-react";
 
@@ -14,7 +15,13 @@ export function Header() {
           <span className="hidden sm:inline">MovieDB</span>
         </Link>
 
-        <SearchBar />
+        <Suspense
+          fallback={
+            <div className="w-full max-w-md h-10 bg-muted animate-pulse rounded-md" />
+          }
+        >
+          <SearchBar />
+        </Suspense>
       </div>
     </header>
   );
