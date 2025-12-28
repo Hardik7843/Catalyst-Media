@@ -33,6 +33,7 @@ function SearchResults() {
         setMovies(response.movies);
         setPagination(response.pagination);
       } catch (error) {
+        // handle error gracefully
         console.error("Error searching movies:", error);
         setMovies([]);
       } finally {
@@ -41,7 +42,7 @@ function SearchResults() {
     }
 
     loadSearchResults();
-  }, [query, page]);
+  }, [query, page]); // re-run when query or page changes
 
   if (!query) {
     return (

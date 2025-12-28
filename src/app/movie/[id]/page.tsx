@@ -52,7 +52,7 @@ export default function MoviePage() {
         setCredits(creditsData);
         setSimilar(similarData);
       } catch (error) {
-        console.error("Error loading movie data:", error);
+        console.error("Failed to load movie:", error);
         notFound();
       } finally {
         setIsLoading(false);

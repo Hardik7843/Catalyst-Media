@@ -24,11 +24,13 @@ export function Pagination({
     router.push(`${baseUrl}?${params.toString()}`);
   };
 
+  // calculate which page numbers to show
   const pages = [];
   const maxPagesToShow = 5;
   let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
   let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
 
+  // adjust start if we're near the end
   if (endPage - startPage + 1 < maxPagesToShow) {
     startPage = Math.max(1, endPage - maxPagesToShow + 1);
   }

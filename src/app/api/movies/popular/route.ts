@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    // TODO: maybe add better error logging here
     console.error("Error in popular movies API:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch popular movies" },

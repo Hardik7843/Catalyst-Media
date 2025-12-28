@@ -14,11 +14,13 @@ export default function Home() {
     async function loadMovies() {
       try {
         setIsLoading(true);
+        // fetch both at the same time for better performance
         const [trending, popular] = await Promise.all([
           fetchTrendingMovies("day"),
           fetchPopularMovies(1),
         ]);
 
+        // only show first 10 of each
         setTrendingMovies(trending.slice(0, 10));
         setPopularMovies(popular.movies.slice(0, 10));
       } catch (error) {

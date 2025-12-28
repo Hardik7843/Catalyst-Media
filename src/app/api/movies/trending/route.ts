@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const timeWindow =
       (searchParams.get("timeWindow") as "day" | "week") || "day";
 
+    // fetch trending movies from TMDB
     const movies = await getTrendingMovies(timeWindow);
 
     return NextResponse.json({

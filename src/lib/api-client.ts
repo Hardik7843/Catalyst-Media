@@ -16,6 +16,7 @@ interface PaginatedResponse<T> extends ApiResponse<T> {
 
 const API_BASE = "/api/movies";
 
+// helper function to handle API calls
 async function fetchApi<T>(url: string): Promise<T> {
   const response = await fetch(url);
 
