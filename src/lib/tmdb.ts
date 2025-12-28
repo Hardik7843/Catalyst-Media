@@ -5,7 +5,8 @@ import {
   getMockCredits,
   getMockMoviesResponse,
 } from "./mock-data";
-
+import placeholderMovie from "../public/placeholder-movie.png";
+import placeholderBackdrop from "../public/placeholder-backdrop.png";
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
@@ -126,7 +127,7 @@ export const getImageUrl = (
   path: string | null,
   size: "w200" | "w300" | "w500" | "original" = "w500"
 ) => {
-  if (!path) return "/placeholder-movie.png";
+  if (!path) return placeholderMovie;
   return `${IMAGE_BASE_URL}/${size}${path}`;
 };
 
@@ -134,7 +135,7 @@ export const getBackdropUrl = (
   path: string | null,
   size: "w780" | "w1280" | "original" = "w1280"
 ) => {
-  if (!path) return "/placeholder-backdrop.png";
+  if (!path) return placeholderBackdrop;
   return `${IMAGE_BASE_URL}/${size}${path}`;
 };
 
