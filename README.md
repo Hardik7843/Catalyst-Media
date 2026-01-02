@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Catalyst Media
 
-## Getting Started
+A small, fast movie browser built with Next.js that uses The Movie Database (TMDB) API — with a mock-data fallback when an API key is not provided. It includes features like trending/popular lists, search, movie details, credits, similar movies, and pagination.
 
-First, run the development server:
+**Tech stack**
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+**Contents**
+- `src/app` — application routes and pages
+- `src/lib` — TMDB API client, mock data and helpers
+- `src/components` — UI components (cards, grid, pagination, header, etc.)
+
+**Quick links**
+- Development server: `pnpm dev`
+- Build: `pnpm build`
+- Start (production): `pnpm start`
+
+**Note on mock data**: If a TMDB API key is not configured, the app will automatically fall back to mock data for local development and demonstration. You can also enable mock mode explicitly via `NEXT_PUBLIC_USE_MOCK_DATA=true`.
+
+**Prerequisites**
+- Node.js 18+ (LTS recommended)
+- `pnpm` (recommended package manager). Install with:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install -g pnpm
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Getting started (local)
+-----------------------
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repo and change into the project directory
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+git clone <repo-url>
+cd Catalyst-Media
+```
 
-## Learn More
+2. Install dependencies
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Create environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Copy or create a `.env.local` file in the project root and add your TMDB API key:
 
-## Deploy on Vercel
+```env
+# .env.local
+TMDB_API_KEY=your_tmdb_api_key_here
+TMDB_READ_ACCESS_TOKEN='access_token'
+# Optional: force mock data (true/false)
+NEXT_PUBLIC_USE_MOCK_DATA=false
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+If `TMDB_API_KEY` is missing or empty the app will use mock data automatically.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Run the development server
+
+```bash
+pnpm dev
+```
+
+Open http://localhost:3000 in your browser.
+
+Build & run (production)
+------------------------
+
+```bash
+pnpm build
+pnpm start
+```
+
+Linting
+-------
+
+Run ESLint:
+
+```bash
+pnpm lint
+```
+
+Project structure (high level)
+------------------------------
+
+- `src/app` — Next.js app routes and pages. API route wrappers are under `src/app/api/movies/*`.
+- `src/lib/tmdb.ts` — TMDB client, image helpers and mock-data fallback.
+- `src/lib/mock-data.ts` — local mock responses used when no API key is present.
+- `src/components` — presentational and UI components used across pages.
+
+Environment variables reference
+-------------------------------
+- `TMDB_API_KEY` — (required for real TMDB data) your TMDB API key.
+- `NEXT_PUBLIC_USE_MOCK_DATA` — optional; set to `true` to force mock data.
+
+Troubleshooting
+---------------
+- If you see mock data even with `TMDB_API_KEY` set, ensure the `.env.local` file is in the project root and restart the dev server.
+- Check the terminal for warnings from `src/lib/tmdb.ts` — the app logs a warning when the API key is missing.
+
+Contributing
+------------
+Contributions, bug reports and improvements are welcome. Open an issue or a pull request.
+
+License
+-------
+This project does not include a license file. Add one if you intend to publish or open-source the project.
+
+---
+
+If you'd like, I can also add example `.env.local` templates, CI scripts, or a short contribution guide next.
