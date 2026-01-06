@@ -22,5 +22,7 @@ async function getMoviesData() {
 export default async function Home() {
   const { trending, popular } = await getMoviesData();
 
+  console.log("trending: ", trending);
+  console.log("popular: ", popular);
   return <HomeClient trendingMovies={trending} popularMovies={popular} />;
 }
